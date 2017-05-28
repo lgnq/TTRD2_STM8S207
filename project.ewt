@@ -2017,6 +2017,9 @@
     <file>
       <name>$PROJ_DIR$\src\user.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\src\watchdog_task.c</name>
+    </file>
   </group>
 </project>
 

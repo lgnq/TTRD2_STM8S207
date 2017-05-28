@@ -257,8 +257,8 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state>C:\Users\xxxx\Desktop\STM8\TTRD2_STM8S207\inc</state>
-          <state>C:\Users\xxxx\Desktop\STM8\TTRD2_STM8S207\lib\inc</state>
+          <state>$PROJ_DIR$\inc</state>
+          <state>$PROJ_DIR$\lib\inc</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1665,6 +1665,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\src\user.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\src\watchdog_task.c</name>
     </file>
   </group>
 </project>
