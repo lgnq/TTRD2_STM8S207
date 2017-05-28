@@ -14,10 +14,12 @@
 *.uvproj
 *.uvopt
 *.uvgui.*
+*.dep
 
 [Dd]ebug/
 [Oo]utput/
 [Ll]ist/
+[Ss]ettings/
 *.dep
 *.bin
 *.map
