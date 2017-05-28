@@ -14,12 +14,11 @@
 *.uvproj
 *.uvopt
 *.uvgui.*
-*.dep
 
 [Dd]ebug/
 [Oo]utput/
 [Ll]ist/
-[Ss]ettings/
+settings/
 *.dep
 *.bin
 *.map
@@ -31,6 +30,6 @@
 *.obj
 *.hex
 
-*.hex
 *.uvopt
 *.uvproj
+*.bat
