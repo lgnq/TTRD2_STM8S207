@@ -50,7 +50,7 @@
 void WATCHDOG_Init(const uint32_t);
 void WATCHDOG_Update(void);
 
-FlagStatus reset_by_watchdog(void);
+uint8_t reset_by_watchdog(void);
 
 #endif
 

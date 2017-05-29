@@ -137,7 +137,7 @@ void WATCHDOG_Update(void)
     IWDG_ReloadCounter();
 }
 
-FlagStatus reset_by_watchdog(void)
+uint8_t reset_by_watchdog(void)
 {
     if (RST_GetFlagStatus(RST_FLAG_IWDGF))
     {
