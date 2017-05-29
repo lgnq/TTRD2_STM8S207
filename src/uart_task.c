@@ -131,6 +131,14 @@ void UART2_BUF_O_Init(uint32_t BAUD_RATE)
    // Enable UART2
    USART_Cmd(USART2, ENABLE);
 #else
+    UART1_DeInit();
+    
+    //波特率，字节数，1个停止位，无奇偶效验位，非同步模式，允许接受和发送
+    UART1_Init((u32)115200, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
+
+    // UART1_Init((u32)115200, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_RX_ENABLE);
+    // UART1_ITConfig(UART1_IT_RXNE_OR,ENABLE);
+    UART1_Cmd(ENABLE);   
 #endif   
 }
 
@@ -503,6 +511,11 @@ void UART2_BUF_O_Send_Char(const char CHARACTER)
 
     USART_SendData(USART2, CHARACTER);
 #else
+    UART1_SendData8((unsigned char)CHARACTER);
+  
+    /* Loop until the end of transmission */
+    while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
+      ;
 #endif    
 }
 
