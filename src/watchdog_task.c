@@ -137,6 +137,21 @@ void WATCHDOG_Update(void)
     IWDG_ReloadCounter();
 }
 
+FlagStatus reset_by_watchdog(void)
+{
+    if (RST_GetFlagStatus(RST_FLAG_IWDGF))
+    {
+        /* Clear IWDGF Flag */
+        RST_ClearFlag(RST_FLAG_IWDGF);        
+        
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 /*----------------------------------------------------------------------------*-
   ------------------------------ END OF FILE ---------------------------------
 -*----------------------------------------------------------------------------*/

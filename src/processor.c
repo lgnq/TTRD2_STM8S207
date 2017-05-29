@@ -118,25 +118,17 @@ void PROCESSOR_Init(void)
 -*----------------------------------------------------------------------------*/
 void PROCESSOR_Identify_Reqd_MoSt(void)
 {
-#if 0  
-    // Check cause of reset
-    if (RCC_GetFlagStatus(RCC_FLAG_IWDGRST) == SET)
+    if (reset_by_watchdog())
     {
         // Reset was caused by WDT => "Fail Safe" state
-        Processor_MoSt_g = FAIL_SAFE_S;
+        Processor_MoSt_g = FAIL_SAFE_S;      
     }
     else
     {
         // Here we treat all other forms of reset in the same way
         // => "Normal" mode
-        Processor_MoSt_g = NORMAL_M;
-    }
-      
-    // Clear cause-of-reset flags
-    RCC_ClearFlag();
-#else
-    Processor_MoSt_g = NORMAL_M;
-#endif
+        Processor_MoSt_g = NORMAL_M;      
+    } 
 }
 
 /*----------------------------------------------------------------------------*-
