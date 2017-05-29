@@ -45,8 +45,6 @@
 // Processor Header
 #include "main.h"
 
-// Links to target libraries
-
 // ------ Public function prototypes -----------------------------------------
 
 void WATCHDOG_Init(const uint32_t);

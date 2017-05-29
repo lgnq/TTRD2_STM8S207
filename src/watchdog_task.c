@@ -81,26 +81,18 @@
 -*----------------------------------------------------------------------------*/
 void WATCHDOG_Init(const uint32_t WDT_COUNT)
 {
-#if 0  
-   // Enable write access to IWDG_PR and IWDG_RLR registers
-   IWDG->KR = 0x5555;
+    /* Enable the IWDG*/
+    IWDG_Enable();
 
-   // Set pre-scalar to 4 (timer resolution is 125μs)
-   IWDG->PR = 0x00;
+    /* Enable the access to the IWDG registers*/
+    IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
+    
+    /* Fixe IWDG Reset period */
+    IWDG_SetPrescaler(IWDG_Prescaler_256);//250hz
+    IWDG_SetReload(0xFA);//1s内喂狗 250次递减 fa递减到00 最大的时间是1s
 
-   // Counts down to 0 in increments of 125μs
-   // Max reload value is 0xFFF (4095) or ~511 ms (with this prescalar)
-   IWDG->RLR = WDT_COUNT;
-
-   // Reload IWDG counter
-   IWDG->KR = 0xAAAA;
-
-   // Enable IWDG (the LSI oscillator will be enabled by hardware)
-   IWDG->KR = 0xCCCC;
-#endif
-   
-   // Feed watchdog
-   WATCHDOG_Update();
+    // Feed watchdog
+    WATCHDOG_Update();
 }
 
 /*----------------------------------------------------------------------------*-
@@ -141,8 +133,8 @@ void WATCHDOG_Init(const uint32_t WDT_COUNT)
 -*----------------------------------------------------------------------------*/
 void WATCHDOG_Update(void)
 {
-   // Feed the watchdog (reload IWDG counter)
-   IWDG->KR = 0xAAAA;
+    // Feed the watchdog (reload IWDG counter)
+    IWDG_ReloadCounter();
 }
 
 /*----------------------------------------------------------------------------*-
