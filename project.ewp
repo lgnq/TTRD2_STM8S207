@@ -1655,6 +1655,9 @@
       <name>$PROJ_DIR$\src\heartbeat_task.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\src\key_task.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\src\main.c</name>
     </file>
     <file>
