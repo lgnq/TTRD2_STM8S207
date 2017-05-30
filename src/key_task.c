@@ -87,20 +87,9 @@ static uint32_t Switch_button1_pressed_g = BUTTON1_NOT_PRESSED;
 -*----------------------------------------------------------------------------*/
 void SWITCH_BUTTON1_Init(void)
 {
-#if 0    
-    GPIO_InitTypeDef GPIO_InitStruct;
-
-    // Enable GPIOC clock 
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
-
-    // Configure the switch pin for input
-    GPIO_InitStruct.GPIO_Mode  = GPIO_Mode_IN;
-    GPIO_InitStruct.GPIO_Speed = GPIO_High_Speed; 
-    GPIO_InitStruct.GPIO_PuPd  = GPIO_PuPd_NOPULL;
-    GPIO_InitStruct.GPIO_Pin   = BUTTON1_PIN;
-
-    GPIO_Init(BUTTON1_PORT, &GPIO_InitStruct);
-#endif
+    GPIO_Init(KEY1_PORT, KEY1_PIN, GPIO_MODE_IN_PU_NO_IT);
+    ///GPIO_Init(KEY2_PORT, KEY2_PIN, GPIO_MODE_IN_PU_NO_IT);
+    ///GPIO_Init(KEY3_PORT, KEY3_PIN, GPIO_MODE_IN_PU_NO_IT);
 
     // Set the initial state  
     Switch_button1_pressed_g = BUTTON1_NOT_PRESSED;
@@ -148,7 +137,7 @@ void SWITCH_BUTTON1_Update(void)
     uint32_t Button1_input = 1;
         
     // Read the pin state
-    ///Button1_input = GPIO_ReadInputDataBit(BUTTON1_PORT, BUTTON1_PIN);
+    Button1_input = GPIO_ReadInputPin(KEY1_PORT, KEY1_PIN);
    
     if (Button1_input == SW_PRESSED)
     {

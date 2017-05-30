@@ -45,6 +45,13 @@
 // Processor Header
 #include "main.h"
 
+#define KEY1_PIN        GPIO_PIN_0 
+#define KEY2_PIN        GPIO_PIN_4
+#define KEY3_PIN        GPIO_PIN_3 
+#define KEY1_PORT       GPIOI
+#define KEY2_PORT       GPIOE
+#define KEY3_PORT       GPIOE
+
 // ------ Public constants ---------------------------------------------------
 
 // Used to indicate switch state (public)
