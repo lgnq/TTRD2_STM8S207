@@ -168,9 +168,9 @@ void PROCESSOR_Configure_Reqd_MoSt(void)
         case FAIL_SAFE_S:
         {
             // Configure UART1 (set baud rate)
-            ///UART2_BUF_O_Init(230400);
-            ///UART2_BUF_O_Write_String_To_Buffer("\nFail-Safe State\n");
-            ///UART2_BUF_O_Send_All_Data();
+            UART2_BUF_O_Init(115200);
+            UART2_BUF_O_Write_String_To_Buffer("\nFail-Safe State\n");
+            UART2_BUF_O_Send_All_Data();
 
             // Reset caused by iWDT
             // Trigger "fail safe" behaviour
