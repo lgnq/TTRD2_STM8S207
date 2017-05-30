@@ -241,7 +241,7 @@ void PROCESSOR_Perform_Safe_Shutdown(void)
     while (1)
     {
         // Flicker Heartbeat LED to indicate fault
-        for (Delay1 = 0; Delay1 < 1000000; Delay1++) 
+        for (Delay1 = 0; Delay1 < 1000; Delay1++) 
         {
             Delay2 *= 3;
         }
