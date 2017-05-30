@@ -49,15 +49,26 @@
 
 // ------ Private constants --------------------------------------------------
 
+// Value returned by PC_LINK_Get_Char if no character is
+// available in buffer
+#define PC_LINK_NO_CHAR 127
+#define XON 0x11
+#define XOFF 0x13
+
 // The transmit buffer length
-#define Tx_buffer_g_SIZE_BYTES 2000
+#define Tx_buffer_g_SIZE_BYTES 200
+// The receive buffer length
+#define Rx_buffer_g_SIZE_BYTES 200
 
 // ------ Private variables --------------------------------------------------
 
 static char Tx_buffer_g[Tx_buffer_g_SIZE_BYTES];
+static char Rx_buffer_g[Rx_buffer_g_SIZE_BYTES];
 
 static uint32_t Out_written_index_g;  // Data in buffer that has been written 
 static uint32_t Out_waiting_index_g;  // Data in buffer not yet written
+static uint32_t In_read_index_g;      // Data in buffer that has been received 
+static uint32_t In_waiting_index_g;   // Data in buffer not yet received
 
 // ------ Private function prototypes ----------------------------------------
 
@@ -93,53 +104,13 @@ void UART2_BUF_O_Send_Char(const char);
 -*----------------------------------------------------------------------------*/
 void UART2_BUF_O_Init(uint32_t BAUD_RATE)
 {
-#if 0  
-   GPIO_InitTypeDef GPIO_InitStructure;
-   USART_InitTypeDef USART_InitStructure;
-
-   // USART2 clock enable 
-   RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
-
-   // GPIOA clock enable 
-   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-
-   // GPIO config
-   GPIO_InitStructure.GPIO_Pin   = UART2_TX_PIN; 
-   GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF;
-   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-   GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
-   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-   GPIO_Init(UART2_PORT, &GPIO_InitStructure);
-
-   GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_USART2);
-
-   // USART2 configuration
-   // - BaudRate as specified in function parameter
-   // - Word Length = 8 Bits
-   // - One Stop Bit
-   // - No parity
-   // - Hardware flow control disabled (RTS and CTS signals)
-   // - Tx (only) enabled
-   USART_InitStructure.USART_BaudRate = BAUD_RATE;
-   USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-   USART_InitStructure.USART_StopBits = USART_StopBits_1;
-   USART_InitStructure.USART_Parity = USART_Parity_No;
-   USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-   USART_InitStructure.USART_Mode = USART_Mode_Tx;
-   USART_Init(USART2, &USART_InitStructure);
-
-   // Enable UART2
-   USART_Cmd(USART2, ENABLE);
-#else
     UART1_DeInit();
-    
-    //波特率，字节数，1个停止位，无奇偶效验位，非同步模式，允许接受和发送
+
     UART1_Init(BAUD_RATE, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
 
     // UART1_Init((u32)115200, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_RX_ENABLE);
     // UART1_ITConfig(UART1_IT_RXNE_OR,ENABLE);
     UART1_Cmd(ENABLE);   
-#endif   
 }
 
 /*----------------------------------------------------------------------------*-
@@ -196,6 +167,27 @@ void UART2_BUF_O_Update(void)
         // No data to send - just reset the buffer index
         Out_waiting_index_g = 0;
         Out_written_index_g = 0;
+    }
+
+    if (UART1_GetFlagStatus(UART1_FLAG_RXNE) == 1)
+    {
+        // Flag only set when a valid stop bit is received,
+        // -> data ready to be read into the received buffer
+        // Want to read into index 0, if old data have been read
+        // (simple ~circular buffer)
+        if (In_waiting_index_g == In_read_index_g)
+        {
+            In_waiting_index_g = 0;
+            In_read_index_g = 0;
+        }
+
+        // Read the data from USART buffer
+        Rx_buffer_g[In_waiting_index_g] = UART1_ReceiveData8();
+
+        if (In_waiting_index_g < Rx_buffer_g_SIZE_BYTES)
+        {
+            In_waiting_index_g++;
+        }
     }
 }
 
@@ -326,6 +318,23 @@ void UART2_BUF_O_Write_Char_To_Buffer(const char CHARACTER)
         // No error handling / reporting here (characters may be lost)
         // Adapt as required to meet the needs of your application
     }
+}
+
+uint8_t uart_read_char_from_buffer(void)
+{
+    uint8_t ch = PC_LINK_NO_CHAR;
+    
+    // If there is new data in the buffer
+    if (In_read_index_g < In_waiting_index_g)
+    {
+        ch = Rx_buffer_g[In_read_index_g];
+        if (In_read_index_g < Rx_buffer_g_SIZE_BYTES)
+        {
+            In_read_index_g++;
+        }
+    }
+
+    return ch;    
 }
 
 /*----------------------------------------------------------------------------*-
@@ -517,6 +526,45 @@ void UART2_BUF_O_Send_Char(const char CHARACTER)
     while (UART1_GetFlagStatus(UART1_FLAG_TXE) == RESET)
       ;
 #endif    
+}
+
+void protocol_processor(uint8_t c)
+{
+    // Perform the task
+    switch (c)
+    {
+        case 'a':
+        case 'A':
+        {
+            UART2_BUF_O_Write_String_To_Buffer("A pressed\r\n");
+            break;
+        }
+        case 'b':
+        case 'B':
+        {
+            UART2_BUF_O_Write_String_To_Buffer("B pressed\r\n");
+            break;
+        }
+        case 'c':
+        case 'C':
+        {
+            UART2_BUF_O_Write_String_To_Buffer("C pressed\r\n");
+            break;
+        }
+        default:
+            UART2_BUF_O_Write_String_To_Buffer("X pressed\r\n");
+    }
+}
+
+void protocol_update(void)
+{
+    uint8_t c;
+
+    c = uart_read_char_from_buffer();
+    if (c != PC_LINK_NO_CHAR)
+    {
+        protocol_processor(c);
+    }
 }
 
 /*----------------------------------------------------------------------------*-

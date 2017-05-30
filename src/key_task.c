@@ -48,7 +48,7 @@
 #define SW_PRESSED (0)
 
 // SW_THRES must be > 1 for correct debounce behaviour
-#define SW_THRES (3)
+#define SW_THRES (20)
 
 // ------ Private variable definitions ----------------------------------------
 

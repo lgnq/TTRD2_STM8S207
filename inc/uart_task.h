@@ -59,6 +59,9 @@ void UART2_BUF_O_Write_Number10_To_Buffer(const uint32_t DATA);
 void UART2_BUF_O_Write_Number03_To_Buffer(const uint32_t DATA);
 void UART2_BUF_O_Write_Number02_To_Buffer(const uint32_t DATA);
 
+uint8_t uart_read_char_from_buffer(void);
+void protocol_update(void);
+
 #endif
 
 /*----------------------------------------------------------------------------*-
