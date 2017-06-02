@@ -104,13 +104,18 @@ void UART2_BUF_O_Send_Char(const char);
 -*----------------------------------------------------------------------------*/
 void UART2_BUF_O_Init(uint32_t BAUD_RATE)
 {
+    Out_written_index_g = 0;
+    Out_waiting_index_g = 0;
+    In_read_index_g     = 0;
+    In_waiting_index_g  = 0;
+    
     UART1_DeInit();
 
     UART1_Init(BAUD_RATE, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_TXRX_ENABLE);
 
     // UART1_Init((u32)115200, UART1_WORDLENGTH_8D, UART1_STOPBITS_1, UART1_PARITY_NO, UART1_SYNCMODE_CLOCK_DISABLE, UART1_MODE_RX_ENABLE);
     // UART1_ITConfig(UART1_IT_RXNE_OR,ENABLE);
-    UART1_Cmd(ENABLE);   
+    UART1_Cmd(ENABLE);         
 }
 
 /*----------------------------------------------------------------------------*-
