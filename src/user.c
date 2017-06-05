@@ -2,8 +2,7 @@
 
 extern void tick_handler(void);
 
-#pragma vector=0xD
-__interrupt void TIM1_UPD_OVF_TRG_BRK_IRQHandler(void)
+INTERRUPT_HANDLER(TIM1_UPD_OVF_TRG_BRK_IRQHandler, 11)
 {
     TIM1_ClearITPendingBit(TIM1_IT_UPDATE);
 
@@ -37,17 +36,17 @@ void timer_interrupt_enable(void)
 
 void int_enable(void)
 {
-    __enable_interrupt();   /* enable interrupts */  
+    enableInterrupts();   /* enable interrupts */  
 }
 
 void int_disable(void)
 {
-    __disable_interrupt();  /* disable interrupts */
+    disableInterrupts();  /* disable interrupts */
 }
 
 void sleep(void)
 {
-    __wait_for_interrupt(); //WFI    
+    wfi(); //WFI    
 }
 
 void mcu_init(void)
